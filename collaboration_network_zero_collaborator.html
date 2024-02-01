@@ -1,0 +1,271 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100%;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 100%;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Al-Homrany MA", "label": "Al-Homrany MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Marchiori CH", "label": "Marchiori CH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Brackenbury TD", "label": "Brackenbury TD", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liu XM", "label": "Liu XM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Attia MA", "label": "Attia MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fedorko JM", "label": "Fedorko JM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Squires N", "label": "Squires N", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jordan P", "label": "Jordan P", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stone PJ", "label": "Stone PJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vaz NM", "label": "Vaz NM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jemaneh L", "label": "Jemaneh L", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rodriguez JB", "label": "Rodriguez JB", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stephenson LS", "label": "Stephenson LS", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carme B", "label": "Carme B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Aboul-Ela EI", "label": "Aboul-Ela EI", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Moyad MA", "label": "Moyad MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cox FE", "label": "Cox FE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vray B", "label": "Vray B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Okuda K", "label": "Okuda K", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hunter JM", "label": "Hunter JM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rashed AA", "label": "Rashed AA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kader AA", "label": "Kader AA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Twfeek GM", "label": "Twfeek GM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Al-Otaibi FE", "label": "Al-Otaibi FE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Quinnell RJ", "label": "Quinnell RJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "KHAYYAL MT", "label": "KHAYYAL MT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gregory TR", "label": "Gregory TR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Abdel-Hamid HF", "label": "Abdel-Hamid HF", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sutherst RW", "label": "Sutherst RW", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Richens J", "label": "Richens J", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yasawy MI", "label": "Yasawy MI", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arinola OG", "label": "Arinola OG", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Brier B", "label": "Brier B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Etard JE", "label": "Etard JE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mahmoud AA", "label": "Mahmoud AA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wiest PM", "label": "Wiest PM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Van Velthuysen ML", "label": "Van Velthuysen ML", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liese B", "label": "Liese B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Braun-Munzinger RA", "label": "Braun-Munzinger RA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bailey NT", "label": "Bailey NT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Prescott NM", "label": "Prescott NM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Harnett W", "label": "Harnett W", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wozencraft AO", "label": "Wozencraft AO", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wyler DJ", "label": "Wyler DJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Darwish AM", "label": "Darwish AM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lamps LW", "label": "Lamps LW", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Neal PM", "label": "Neal PM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bog\u00e9a T", "label": "Bog\u00e9a T", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Crichton-Harris A", "label": "Crichton-Harris A", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wu KC", "label": "Wu KC", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yosry A", "label": "Yosry A", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "el-Din AT", "label": "el-Din AT", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Williams R", "label": "Williams R", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zampachov\u00e1 V", "label": "Zampachov\u00e1 V", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mostafa BB", "label": "Mostafa BB", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wainwright H", "label": "Wainwright H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Triggle DJ", "label": "Triggle DJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Blanchard TJ", "label": "Blanchard TJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rozemberg B", "label": "Rozemberg B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ayoub SM", "label": "Ayoub SM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Al-Freihi HM", "label": "Al-Freihi HM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carod-Artal FJ", "label": "Carod-Artal FJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lewis F", "label": "Lewis F", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rokni MB", "label": "Rokni MB", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hussein MR", "label": "Hussein MR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Monzote L", "label": "Monzote L", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ziskind B", "label": "Ziskind B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Morsy GH", "label": "Morsy GH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "El-Zayadi AR", "label": "El-Zayadi AR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Goldberg JE", "label": "Goldberg JE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Aladesanmi AJ", "label": "Aladesanmi AJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Meltzer AS", "label": "Meltzer AS", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Johnson EM", "label": "Johnson EM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nour NM", "label": "Nour NM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Peacock C", "label": "Peacock C", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tessier J", "label": "Tessier J", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Matthews KR", "label": "Matthews KR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Manyak MJ", "label": "Manyak MJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hai-Chun W", "label": "Hai-Chun W", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Luo JL", "label": "Luo JL", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Song-Lin H", "label": "Song-Lin H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Huang AJ", "label": "Huang AJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Miao P", "label": "Miao P", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ting-Fang L", "label": "Ting-Fang L", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yong-Xin N", "label": "Yong-Xin N", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MacConnachie A", "label": "MacConnachie A", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wang XK", "label": "Wang XK", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Feng YC", "label": "Feng YC", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liang P", "label": "Liang P", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ai ZY", "label": "Ai ZY", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rom\u00e1n GC", "label": "Rom\u00e1n GC", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Berger JR", "label": "Berger JR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nakayama S", "label": "Nakayama S", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Carod Artal FJ", "label": "Carod Artal FJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fan KW", "label": "Fan KW", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hipgrave D", "label": "Hipgrave D", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sandstead HH", "label": "Sandstead HH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Song BC", "label": "Song BC", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sun RG", "label": "Sun RG", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liu DN", "label": "Liu DN", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hao YF", "label": "Hao YF", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Du H", "label": "Du H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pittella JE", "label": "Pittella JE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Coyle CM", "label": "Coyle CM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lal V", "label": "Lal V", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tang YE", "label": "Tang YE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ladu R", "label": "Ladu R", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Othman RA", "label": "Othman RA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Guly H", "label": "Guly H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mamo H", "label": "Mamo H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Huh S", "label": "Huh S", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cheng BB", "label": "Cheng BB", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nevin RL", "label": "Nevin RL", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Geerdes-Fenge HF", "label": "Geerdes-Fenge HF", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tang ZW", "label": "Tang ZW", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mohammad KA", "label": "Mohammad KA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Barakat RM", "label": "Barakat RM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bin Mohanna MA", "label": "Bin Mohanna MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kali A", "label": "Kali A", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Feng SH", "label": "Feng SH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liu AM", "label": "Liu AM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Namatame I", "label": "Namatame I", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ZHANG FG", "label": "ZHANG FG", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yu SZ", "label": "Yu SZ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Adeel AA", "label": "Adeel AA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cox FEG", "label": "Cox FEG", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Silva CLM", "label": "Silva CLM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Slootweg R", "label": "Slootweg R", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Roy KK", "label": "Roy KK", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "El Kouni MH", "label": "El Kouni MH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Famakinde DO", "label": "Famakinde DO", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Brendel B", "label": "Brendel B", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Yuan SM", "label": "Yuan SM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "\u015een N", "label": "\u015een N", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Shatat IF", "label": "Shatat IF", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Xiao-Li Y", "label": "Xiao-Li Y", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jiao-Jiao L", "label": "Jiao-Jiao L", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Long-Zhi J", "label": "Long-Zhi J", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Qing-Qing Z", "label": "Qing-Qing Z", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "\u00d6zbilgin A", "label": "\u00d6zbilgin A", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Salih MA", "label": "Salih MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Veale CGL", "label": "Veale CGL", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pisarski K", "label": "Pisarski K", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zhi-Hua H", "label": "Zhi-Hua H", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Nelwan ML", "label": "Nelwan ML", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hussein MIH", "label": "Hussein MIH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Omar HH", "label": "Omar HH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chun-Yun L", "label": "Chun-Yun L", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Xiaoyan D", "label": "Xiaoyan D", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cohen PR", "label": "Cohen PR", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alkhamees MA", "label": "Alkhamees MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bianba ZM", "label": "Bianba ZM", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Majangara Karaga R", "label": "Majangara Karaga R", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fadladdin YAJ", "label": "Fadladdin YAJ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Garcia HH", "label": "Garcia HH", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Feng GQ", "label": "Feng GQ", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AlGabbani Q", "label": "AlGabbani Q", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Deka MA", "label": "Deka MA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Liu QY", "label": "Liu QY", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Darraj M", "label": "Darraj M", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kattner AA", "label": "Kattner AA", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Khalifa SE", "label": "Khalifa SE", "shape": "dot"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "company", "label": "company", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"from": "Al-Homrany MA", "to": "company"}, {"from": "Marchiori CH", "to": "company"}, {"from": "Brackenbury TD", "to": "company"}, {"from": "Liu XM", "to": "company"}, {"from": "Attia MA", "to": "company"}, {"from": "Fedorko JM", "to": "company"}, {"from": "Squires N", "to": "company"}, {"from": "Jordan P", "to": "company"}, {"from": "Stone PJ", "to": "company"}, {"from": "Vaz NM", "to": "company"}, {"from": "Jemaneh L", "to": "company"}, {"from": "Rodriguez JB", "to": "company"}, {"from": "Stephenson LS", "to": "company"}, {"from": "Carme B", "to": "company"}, {"from": "Aboul-Ela EI", "to": "company"}, {"from": "Moyad MA", "to": "company"}, {"from": "Cox FE", "to": "company"}, {"from": "Vray B", "to": "company"}, {"from": "Okuda K", "to": "company"}, {"from": "Hunter JM", "to": "company"}, {"from": "Rashed AA", "to": "company"}, {"from": "Kader AA", "to": "company"}, {"from": "Twfeek GM", "to": "company"}, {"from": "Al-Otaibi FE", "to": "company"}, {"from": "Quinnell RJ", "to": "company"}, {"from": "KHAYYAL MT", "to": "company"}, {"from": "Gregory TR", "to": "company"}, {"from": "Abdel-Hamid HF", "to": "company"}, {"from": "Sutherst RW", "to": "company"}, {"from": "Richens J", "to": "company"}, {"from": "Yasawy MI", "to": "company"}, {"from": "Arinola OG", "to": "company"}, {"from": "Brier B", "to": "company"}, {"from": "Etard JE", "to": "company"}, {"from": "Mahmoud AA", "to": "company"}, {"from": "Wiest PM", "to": "company"}, {"from": "Van Velthuysen ML", "to": "company"}, {"from": "Liese B", "to": "company"}, {"from": "Braun-Munzinger RA", "to": "company"}, {"from": "Bailey NT", "to": "company"}, {"from": "Prescott NM", "to": "company"}, {"from": "Harnett W", "to": "company"}, {"from": "Wozencraft AO", "to": "company"}, {"from": "Wyler DJ", "to": "company"}, {"from": "Darwish AM", "to": "company"}, {"from": "Lamps LW", "to": "company"}, {"from": "Neal PM", "to": "company"}, {"from": "Bog\u00e9a T", "to": "company"}, {"from": "Crichton-Harris A", "to": "company"}, {"from": "Wu KC", "to": "company"}, {"from": "Yosry A", "to": "company"}, {"from": "el-Din AT", "to": "company"}, {"from": "Williams R", "to": "company"}, {"from": "Zampachov\u00e1 V", "to": "company"}, {"from": "Mostafa BB", "to": "company"}, {"from": "Wainwright H", "to": "company"}, {"from": "Triggle DJ", "to": "company"}, {"from": "Blanchard TJ", "to": "company"}, {"from": "Rozemberg B", "to": "company"}, {"from": "Ayoub SM", "to": "company"}, {"from": "Al-Freihi HM", "to": "company"}, {"from": "Carod-Artal FJ", "to": "company"}, {"from": "Lewis F", "to": "company"}, {"from": "Rokni MB", "to": "company"}, {"from": "Hussein MR", "to": "company"}, {"from": "Monzote L", "to": "company"}, {"from": "Ziskind B", "to": "company"}, {"from": "Morsy GH", "to": "company"}, {"from": "El-Zayadi AR", "to": "company"}, {"from": "Goldberg JE", "to": "company"}, {"from": "Aladesanmi AJ", "to": "company"}, {"from": "Meltzer AS", "to": "company"}, {"from": "Johnson EM", "to": "company"}, {"from": "Nour NM", "to": "company"}, {"from": "Peacock C", "to": "company"}, {"from": "Tessier J", "to": "company"}, {"from": "Matthews KR", "to": "company"}, {"from": "Manyak MJ", "to": "company"}, {"from": "Hai-Chun W", "to": "company"}, {"from": "Luo JL", "to": "company"}, {"from": "Song-Lin H", "to": "company"}, {"from": "Huang AJ", "to": "company"}, {"from": "Miao P", "to": "company"}, {"from": "Ting-Fang L", "to": "company"}, {"from": "Yong-Xin N", "to": "company"}, {"from": "MacConnachie A", "to": "company"}, {"from": "Wang XK", "to": "company"}, {"from": "Feng YC", "to": "company"}, {"from": "Liang P", "to": "company"}, {"from": "Ai ZY", "to": "company"}, {"from": "Rom\u00e1n GC", "to": "company"}, {"from": "Berger JR", "to": "company"}, {"from": "Nakayama S", "to": "company"}, {"from": "Carod Artal FJ", "to": "company"}, {"from": "Fan KW", "to": "company"}, {"from": "Hipgrave D", "to": "company"}, {"from": "Sandstead HH", "to": "company"}, {"from": "Song BC", "to": "company"}, {"from": "Sun RG", "to": "company"}, {"from": "Liu DN", "to": "company"}, {"from": "Hao YF", "to": "company"}, {"from": "Du H", "to": "company"}, {"from": "Pittella JE", "to": "company"}, {"from": "Coyle CM", "to": "company"}, {"from": "Lal V", "to": "company"}, {"from": "Tang YE", "to": "company"}, {"from": "Ladu R", "to": "company"}, {"from": "Othman RA", "to": "company"}, {"from": "Guly H", "to": "company"}, {"from": "Mamo H", "to": "company"}, {"from": "Huh S", "to": "company"}, {"from": "Cheng BB", "to": "company"}, {"from": "Nevin RL", "to": "company"}, {"from": "Geerdes-Fenge HF", "to": "company"}, {"from": "Tang ZW", "to": "company"}, {"from": "Mohammad KA", "to": "company"}, {"from": "Barakat RM", "to": "company"}, {"from": "Bin Mohanna MA", "to": "company"}, {"from": "Kali A", "to": "company"}, {"from": "Feng SH", "to": "company"}, {"from": "Liu AM", "to": "company"}, {"from": "Namatame I", "to": "company"}, {"from": "ZHANG FG", "to": "company"}, {"from": "Yu SZ", "to": "company"}, {"from": "Adeel AA", "to": "company"}, {"from": "Cox FEG", "to": "company"}, {"from": "Silva CLM", "to": "company"}, {"from": "Slootweg R", "to": "company"}, {"from": "Roy KK", "to": "company"}, {"from": "El Kouni MH", "to": "company"}, {"from": "Famakinde DO", "to": "company"}, {"from": "Brendel B", "to": "company"}, {"from": "Yuan SM", "to": "company"}, {"from": "\u015een N", "to": "company"}, {"from": "Shatat IF", "to": "company"}, {"from": "Xiao-Li Y", "to": "company"}, {"from": "Jiao-Jiao L", "to": "company"}, {"from": "Long-Zhi J", "to": "company"}, {"from": "Qing-Qing Z", "to": "company"}, {"from": "\u00d6zbilgin A", "to": "company"}, {"from": "Salih MA", "to": "company"}, {"from": "Veale CGL", "to": "company"}, {"from": "Pisarski K", "to": "company"}, {"from": "Zhi-Hua H", "to": "company"}, {"from": "Nelwan ML", "to": "company"}, {"from": "Hussein MIH", "to": "company"}, {"from": "Omar HH", "to": "company"}, {"from": "Chun-Yun L", "to": "company"}, {"from": "Xiaoyan D", "to": "company"}, {"from": "Cohen PR", "to": "company"}, {"from": "Alkhamees MA", "to": "company"}, {"from": "Bianba ZM", "to": "company"}, {"from": "Majangara Karaga R", "to": "company"}, {"from": "Fadladdin YAJ", "to": "company"}, {"from": "Garcia HH", "to": "company"}, {"from": "Feng GQ", "to": "company"}, {"from": "AlGabbani Q", "to": "company"}, {"from": "Deka MA", "to": "company"}, {"from": "Liu QY", "to": "company"}, {"from": "Darraj M", "to": "company"}, {"from": "Kattner AA", "to": "company"}, {"from": "Khalifa SE", "to": "company"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    #mynetwork {
+        width: 100%;
+        height: 100vh; 
+    }
+    </style>
+    
